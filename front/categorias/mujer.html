@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SneakFlow - Mujer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div id="content">
+        <header>
+            <img src="../css/img/logo.png" alt="logo">
+
+            <nav class="navbar">
+                <ul>
+                    <li><a href="../index.html" title="Página Principal"><i class="fas fa-home"></i></a></li>
+                    <li><a href="../iniciosesion/index.html" title="Inicia Sesión"><i class="fas fa-user"></i></a></li>
+                    <li><a href="../favoritos/index.html" title="Favoritos"><i class="fas fa-heart"></i></a></li>
+                    <li><a href="../carrito/index.html" title="Carrito"><i class="fas fa-shopping-cart"></i></a> <span id="cart-count">0</span></li>
+                </ul>
+            </nav>
+
+            <nav class="navprod">
+                <button class="menuhamb" id="menuhamb">☰</button>
+                <ul id="menu">
+                    <li><a href="./hombre.html">Hombre</a></li>
+                    <li><a href="./mujer.html">Mujer</a></li>
+                    <li><a href="./ninos.html">Niños</a></li>
+                </ul>
+            </nav>
+            <div id="barrabuscar">
+                <input type="text" placeholder="Buscar productos...">
+                <button>Buscar</button>
+            </div>
+        </header>
+        <main>
+            <section id="banner-mujer">
+                <div class="banner-content">
+                    <h2>Mujer</h2>
+                </div>
+            </section>
+
+            <section aria-label="Galería de zapatillas para mujer">
+                <div class="gallery" id="gallery"></div>
+            </section>
+
+            <div id="product-modal" class="modal" role="dialog" aria-hidden="true">
+                <div class="panel">
+                    <button id="close-modal" style="float:right">Cerrar</button>
+                    <div style="display:flex; gap:12px; align-items:flex-start;">
+                        <img id="modal-img" src="" alt="" style="width:180px;height:180px;object-fit:cover;border-radius:6px">
+                        <div style="flex:1">
+                            <h3 id="modal-name"></h3>
+                            <p id="modal-desc"></p>
+                            <p><strong id="modal-price"></strong></p>
+                            <div class="sizes">
+                                <label>Talla:</label>
+                                <select id="modal-size"></select>
+                            </div>
+                            <div style="margin-top:8px">
+                                <label>Cantidad:</label>
+                                <input id="modal-qty" type="number" value="1" min="1" style="width:60px">
+                            </div>
+                            <div style="margin-top:10px">
+                                <button id="modal-add" class="add-to-cart">Añadir al carrito</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="../js/cart.js"></script>
+    <script>
+   
+    const productos = [
+        {id:'m-01', name:'Zapatilla Mujer 1', price:49.90, img:'../css/img/placeholder.png', desc:'Descripción breve', sizes:['36','37','38','39']},
+        {id:'m-02', name:'Zapatilla Mujer 2', price:64.00, img:'../css/img/placeholder.png', desc:'Descripción breve', sizes:['37','38','39','40']}
+    ];
+
+    function renderGallery(){
+        const g = document.getElementById('gallery'); g.innerHTML='';
+        productos.forEach(p=>{
+            const a = document.createElement('article'); a.className='product-card'; a.dataset.productId=p.id;
+            a.innerHTML = `\n                <img src="${p.img}" class="product-img" alt="${p.name}">\n                <h4 class="product-name">${p.name}</h4>\n                <p class="product-desc">${p.desc}</p>\n                <div class="product-meta"><span class="price">€${p.price.toFixed(2)}</span><button class="add-to-cart" type="button">Añadir</button></div>`;
+            a.addEventListener('click', (e)=>{ if (e.target && e.target.classList.contains('add-to-cart')) return; openModal(p); });
+            a.querySelector('.add-to-cart').addEventListener('click', (ev)=>{ ev.stopPropagation(); addToCart({id:p.id, name:p.name, price:p.price, image:p.img, qty:1}); updateCartCount(); ev.currentTarget.textContent='Añadido'; setTimeout(()=>ev.currentTarget.textContent='Añadir',700); });
+            g.appendChild(a);
+        });
+    }
+
+    function openModal(p){
+        document.getElementById('modal-img').src=p.img; document.getElementById('modal-name').textContent=p.name; document.getElementById('modal-desc').textContent=p.desc; document.getElementById('modal-price').textContent='€'+p.price.toFixed(2);
+        const sz=document.getElementById('modal-size'); sz.innerHTML=''; (p.sizes||[]).forEach(s=>{ const o=document.createElement('option'); o.value=s; o.textContent=s; sz.appendChild(o); });
+        document.getElementById('modal-qty').value=1; const modal=document.getElementById('product-modal'); modal.style.display='flex'; modal.setAttribute('aria-hidden','false');
+        document.getElementById('modal-add').onclick = function(){ const qty=parseInt(document.getElementById('modal-qty').value)||1; addToCart({id:p.id+'-'+(document.getElementById('modal-size').value||''), name:p.name+' (Talla '+(document.getElementById('modal-size').value||'')+')', price:p.price, image:p.img, qty}); updateCartCount(); modal.style.display='none'; modal.setAttribute('aria-hidden','true'); };
+    }
+
+    document.addEventListener('DOMContentLoaded', ()=>{ renderGallery(); document.getElementById('close-modal').addEventListener('click', ()=>{ const m=document.getElementById('product-modal'); m.style.display='none'; m.setAttribute('aria-hidden','true'); }); document.getElementById('product-modal').addEventListener('click', (e)=>{ if (e.target.id==='product-modal'){ e.currentTarget.style.display='none'; e.currentTarget.setAttribute('aria-hidden','true'); } }); });
+    </script>
+</body>
+</html>

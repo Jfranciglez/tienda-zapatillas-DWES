@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SneakFlow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="content">
+        <header>
+            <img src="./css/img/logo.png">
+
+            <nav class="navbar">
+                <ul>
+                    <li><a href="../index.html" title="Página Principal"><i class="fas fa-home"></i></a></li>
+                    <li><a href="../iniciosesion/index.html" title="Inicia Sesión"><i class="fas fa-user"></i></a></li>
+                    <li><a href="../favoritos/index.html" title="Favoritos"><i class="fas fa-heart"></i></a></li>
+                    <li><a href="../carrito/index.html" title="Carrito"><i class="fas fa-shopping-cart"></i></a> <span id="cart-count">0</span></li>
+                </ul>
+            </nav>    
+
+            <nav class="navprod">
+                <button class="menuhamb" id="menuhamb">
+                    ☰
+                </button>
+               
+                <ul id="menu">
+                    <li><a href="../categorias/hombre.html">Hombre</a></li>
+                    <li><a href="../categorias/mujer.html">Mujer</a></li>
+                    <li><a href="../categorias/ninos.html">Niños</a></li>
+                    
+                </ul>
+            </nav>
+             <div id="barrabuscar">
+            <input type="text" placeholder="Buscar productos...">
+            <button>Buscar</button>
+        </div>
+        </header>
+
+        <form id="authForm">
+        <table>
+            <thead>
+                <tr>
+                    <th>Administrador/Cliente</th>
+                    <th>Usuario</th>
+                    <th>Contraseña</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <label><input type="radio" name="role" value="administrador" checked> Administrador</label><br>
+                        <label><input type="radio" name="role" value="cliente"> Cliente</label>
+                    </td>
+                    <td><input type="text" id="username" name="username" placeholder="Usuario"></td>
+                    <td><input type="password" id="password" name="password" placeholder="Contraseña"></td>
+                    <td>
+                        <button type="button" id="btnLogin">Iniciar Sesión</button>
+                        <button type="button" id="btnRegister">Registrarse</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </form>
+
+
+        <div id="message" style="margin-top:10px;"></div>
+        <div id="welcome-section" style="display:none;">
+            <h2>Bienvenido, <span id="user-name"></span></h2>
+            <button id="btnLogout">Logout</button>
+        </div>
+
+
+       
+    </div>
+    <script src="js/iniciosesion.js"></script>
+</body>
+</html>
