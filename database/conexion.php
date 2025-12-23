@@ -1,2 +1,2 @@
 <?php
-$conexion = mysqli_connect(hostname: "db", username: "root", password: "test", database: "tienda_zapatillas");
+$conexion = mysqli_connect(hostname: "localhost", username: "rootdavante", password: "test", database: "tienda_zapatillas");

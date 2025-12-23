@@ -1,8 +1,48 @@
 <?php
-session_start(); //hace que sea accesible solo para admin y el resto los redirige a index.html
+session_start();
+require_once __DIR__ . '/../database/conexion.php';
 
-if (!isset($_SESSION['username']) || $_SESSION['username']['role'] !== 'administrador') {
-    header("Location: index.html");
+// Verificar sesión y rol de administrador
+if (empty($_SESSION['username']) || empty($_SESSION['role']) || $_SESSION['role'] !== 'administrador') {
+    header('Location: ../front/index.html');
+    exit;
+}
+
+// manejar acciones POST: actualizar usuario
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'] ?? '';
+    if ($action === 'update_user') {
+        $user_id = intval($_POST['user_id'] ?? 0);
+        $new_username = trim($_POST['username'] ?? '');
+        $new_role = trim($_POST['role'] ?? 'cliente');
+        $new_password = $_POST['password'] ?? '';
+        if ($user_id > 0 && $new_username !== '') {
+            // actualizar username y role
+            $stmt = mysqli_prepare($conexion, 'UPDATE usuarios SET username = ?, role = ? WHERE user_id = ?');
+            mysqli_stmt_bind_param($stmt, 'ssi', $new_username, $new_role, $user_id);
+            mysqli_stmt_execute($stmt);
+            mysqli_stmt_close($stmt);
+            // actualizar password si se proporcionó
+            if ($new_password !== '') {
+                $hash = password_hash($new_password, PASSWORD_DEFAULT);
+                $stmt2 = mysqli_prepare($conexion, 'UPDATE usuarios SET password = ? WHERE user_id = ?');
+                mysqli_stmt_bind_param($stmt2, 'si', $hash, $user_id);
+                mysqli_stmt_execute($stmt2);
+                mysqli_stmt_close($stmt2);
+            }
+        }
+    }
+    if ($action === 'delete_user') {
+        $user_id = intval($_POST['user_id'] ?? 0);
+        if ($user_id > 0) {
+            $stmt = mysqli_prepare($conexion, 'DELETE FROM usuarios WHERE user_id = ?');
+            mysqli_stmt_bind_param($stmt, 'i', $user_id);
+            mysqli_stmt_execute($stmt);
+            mysqli_stmt_close($stmt);
+        }
+    }
+    // redirigir para evitar reenvío de formularios
+    header('Location: ' . $_SERVER['PHP_SELF']);
     exit;
 }
 
@@ -35,15 +75,15 @@ echo "Bienvenido, administrador";
         require_once __DIR__ . '/../database/conexion.php';
 
         //CRUD de usuarios
-        $query = "SELECT id, role, username, password FROM usuarios";
+        $query = "SELECT user_id, role, username, password FROM usuarios";
         $result = mysqli_query($conexion, $query);
       while ($registro = mysqli_fetch_array(result: $result)) {
-       if (($accion == 'modificar') && ($id == $registro['id'])) {
+       if (($accion == 'modificar') && ($id == $registro['user_id'])) {
                         //fila modificar
                         ?>
                         <tr class="fila-modificable">
                         <form action="#" method="post">
-                            <td><input type="text" name="id" value="<?= $registro["id"] ?>"></td>
+                            <td><input type="text" name="id" value="<?= $registro["user_id"] ?>"></td>
                             <td><input type="text" name="rol" value="<?= $registro["role"] ?>"></td>
                             <td><input type="text" name="usuario" value="<?= $registro["username"] ?>"></td>
                             <td><input type="text" name="contraseña" value="<?= $registro["password"] ?>"></td>
@@ -75,7 +115,7 @@ echo "Bienvenido, administrador";
                         ?>
 
                         <tr>
-                            <td><?= $registro["id"] ?></td>
+                            <td><?= $registro["user_id"] ?></td>
                             <td><?= $registro["role"] ?></td>
                             <td><?= $registro["username"] ?></td>
                             <td><?= $registro["password"] ?></td>
@@ -83,7 +123,7 @@ echo "Bienvenido, administrador";
                             <td>
                                 <form action="#" method="post">
                                     <input type="hidden" name="accion" value="eliminar">
-                                    <input type="hidden" name="id" value="<?= $registro["id"] ?>">
+                                    <input type="hidden" name="id" value="<?= $registro["user_id"] ?>">
                                     <button type="submit" class="btn btn-danger"
                                         <?= $accion == "modificar" ? "disabled" : ""?>>
                                         <i class="bi bi-trash"></i>
@@ -94,7 +134,7 @@ echo "Bienvenido, administrador";
                             <td>
                                 <form action="#" method="post">
                                     <input type="hidden" name="accion" value="modificar">
-                                    <input type="hidden" name="id" value="<?= $registro["id"] ?>">
+                                    <input type="hidden" name="id" value="<?= $registro["user_id"] ?>">
                                     <button type="submit" class="btn btn-primary"
                                         <?= $accion == "modificar" ? "disabled" : ""?>>
                                         <i class="bi bi-pencil"></i>

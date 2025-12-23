@@ -65,20 +65,51 @@ function renderCartPage(){
         // enviar al servidor
         checkoutBtn.disabled = true; checkoutBtn.textContent = 'Enviando...';
         try {
-            const res = await fetch('../../back/ticket.php', {
+            function apiPath(file){
+                const p = window.location.pathname;
+                const idx = p.indexOf('/front/');
+                if (idx !== -1) return window.location.origin + p.slice(0, idx) + '/back/' + file;
+                const proj = '/tienda-zapatillas-DWES';
+                if (p.indexOf(proj) !== -1) return window.location.origin + proj + '/back/' + file;
+                return window.location.origin + '/back/' + file;
+            }
+            const url = apiPath('ticket.php');
+            console.log('POST', url);
+            const res = await fetch(url, {
                 method: 'POST',
+                credentials: 'same-origin',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action: 'checkout', cart })
             });
-            const data = await res.json();
+            console.log('response status', res.status);
+            const text = await res.text();
+            console.log('response text', text);
+            let data;
+            try { data = JSON.parse(text); } catch (e) { throw new Error('Respuesta no JSON: ' + text); }
             if (data.success) {
                 clearCart();
                 alert('Pedido guardado. ID: ' + (data.pedido_id || 'N/A'));
-                if (data.pedido_id) location.href = '../../back/ticket.php?ver=' + data.pedido_id;
+                // redirigir a la página principal del front para que el usuario continúe navegando
+                (function(){
+                    const p = window.location.pathname;
+                    const idx = p.indexOf('/front/');
+                    if (idx !== -1) {
+                        window.location.href = window.location.origin + p.slice(0, idx) + '/front/index.html';
+                        return;
+                    }
+                    const proj = '/tienda-zapatillas-DWES';
+                    if (p.indexOf(proj) !== -1) {
+                        window.location.href = window.location.origin + proj + '/front/index.html';
+                        return;
+                    }
+                    window.location.href = window.location.origin + '/';
+                })();
             } else {
                 if (data.code === 'need_login') {
                     if (confirm(data.message + '\n¿Deseas iniciar sesión ahora?')) {
-                        location.href = '../../front/iniciosesion/index.html';
+                        // redirige al login calculando la ruta relativa al proyecto
+                        const loginUrl = (function(){ const p = window.location.pathname; const idx = p.indexOf('/front/'); if (idx!==-1) return window.location.origin + p.slice(0, idx) + '/front/iniciosesion/index.html'; return window.location.origin + '/tienda-zapatillas-DWES/front/iniciosesion/index.html'; })();
+                        location.href = loginUrl;
                         return;
                     }
                 }
