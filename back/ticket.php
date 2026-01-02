@@ -40,32 +40,6 @@ foreach ($cart as $it) {
     $items[] = ['producto' => $nombre, 'precio' => $precio, 'cantidad' => $cantidad, 'subtotal' => $subtotal];
 }
 
-// crear tablas si no existen (schema sencillo)
-$sql1 = "CREATE TABLE IF NOT EXISTS pedidos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(100) DEFAULT NULL,
-    total DECIMAL(10,2) NOT NULL,
-    fecha DATETIME DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB";
-mysqli_query($conexion, $sql1);
-
-/* si la tabla ya existía pero no tiene columna `username`, añadirla
-$col = mysqli_query($conexion, "SHOW COLUMNS FROM pedidos LIKE 'username'");
-if ($col && mysqli_num_rows($col) === 0) {
-    mysqli_query($conexion, "ALTER TABLE pedidos ADD COLUMN username VARCHAR(100) DEFAULT NULL");
-}*/
-
-$sql2 = "CREATE TABLE IF NOT EXISTS pedido_items (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    pedido_id INT NOT NULL,
-    producto VARCHAR(255) NOT NULL,
-    precio DECIMAL(10,2) NOT NULL,
-    cantidad INT NOT NULL,
-    subtotal DECIMAL(10,2) NOT NULL,
-    FOREIGN KEY (pedido_id) REFERENCES pedidos(id) ON DELETE CASCADE
-) ENGINE=InnoDB";
-mysqli_query($conexion, $sql2);
-
 // insertar pedido (guardamos username)
 $stmt = mysqli_prepare($conexion, 'INSERT INTO pedidos (username, total) VALUES (?, ?)');
 mysqli_stmt_bind_param($stmt, 'sd', $usuario, $total);

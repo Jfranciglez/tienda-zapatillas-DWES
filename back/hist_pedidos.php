@@ -1,19 +1,45 @@
 <?php
 session_start();
 require_once __DIR__ . '/../database/conexion.php';
-if (empty($_SESSION['username']) || empty($_SESSION['role']) || $_SESSION['role'] !== 'administrador') {
-    header('Location: ../front/index.html');
+// Si se solicita sin parámetro id => devolver lista JSON de pedidos del usuario conectado
+$id = intval($_GET['id'] ?? 0);
+
+// petición para lista (sin id)
+if ($id <= 0) {
+    header('Content-Type: application/json; charset=utf-8');
+    if (empty($_SESSION['username'])) {
+        echo json_encode([]);
+        exit;
+    }
+    $username = $_SESSION['username'];
+    $stmt = mysqli_prepare($conexion, 'SELECT id, total, fecha FROM pedidos WHERE username = ? ORDER BY fecha DESC');
+    mysqli_stmt_bind_param($stmt, 's', $username);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    $rows = [];
+    while ($r = mysqli_fetch_assoc($res)) {
+        $rows[] = ['id' => $r['id'], 'total' => $r['total'], 'fecha' => $r['fecha']];
+    }
+    mysqli_stmt_close($stmt);
+    echo json_encode($rows);
     exit;
 }
-$id = intval($_GET['id'] ?? 0);
-if ($id <= 0) { echo "ID inválido"; exit; }
 
+// petición para ver un pedido concreto (id > 0) -> mostrar HTML si el usuario está autorizado
 $stmt = mysqli_prepare($conexion, 'SELECT id, username, total, fecha FROM pedidos WHERE id = ?');
 mysqli_stmt_bind_param($stmt, 'i', $id);
 mysqli_stmt_execute($stmt);
 $res = mysqli_stmt_get_result($stmt);
 $pedido = mysqli_fetch_assoc($res);
 mysqli_stmt_close($stmt);
+
+if (!$pedido) { echo "Pedido no encontrado."; exit; }
+
+// permitir ver el pedido si eres administrador o si eres el propietario
+if (empty($_SESSION['username']) || (($_SESSION['role'] ?? '') !== 'administrador' && $_SESSION['username'] !== $pedido['username'])) {
+    header('Location: ../front/index.html');
+    exit;
+}
 
 $items = [];
 $stmt2 = mysqli_prepare($conexion, 'SELECT producto, precio, cantidad, subtotal FROM pedido_items WHERE pedido_id = ?');
@@ -50,6 +76,5 @@ mysqli_stmt_close($stmt2);
 <?php else: ?>
 <p>Pedido no encontrado.</p>
 <?php endif; ?>
-<p><a href="admin.php">Volver al panel</a></p>
 </body>
 </html>

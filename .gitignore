@@ -1,0 +1,43 @@
+# System files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Node
+node_modules/
+
+# PHP / Composer
+/vendor/
+/.idea/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# OS files
+ehthumbs.db
+Icon
+
+# Logs
+logs/
+*.log
+
+# Build
+dist/
+build/
+
+# Others
+coverage/
+
+# Ignore uploaded images/artifacts sometimes committed by mistake
+*.png
+*.jpg
+*.jpeg
+*.gif

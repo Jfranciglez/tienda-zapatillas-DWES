@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SneakFlow</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
     <div id="content">
         <header>
-            <img src="./css/img/logo.png">
+            <img src="./css/img/v1057-logo-24.png" alt="Logo Shoesrelife">
 
             <nav class="navbar">
                 <ul>
@@ -20,12 +21,7 @@
                     <li><a href="./carrito/index.html" title="Carrito"><i class="fas fa-shopping-cart"></i></a> <span id="cart-count">0</span></li>
                 </ul>
             </nav>    
-
-            <nav class="navprod">
-                <button class="menuhamb" id="menuhamb">
-                    ☰
-                </button>
-               
+            <nav class="navcat">
                 <ul id="menu">
                     <li><a href="./categorias/hombre.html">Hombre</a></li>
                     <li><a href="./categorias/mujer.html">Mujer</a></li>
@@ -34,6 +30,7 @@
                 </ul>
             </nav>
              <div id="barrabuscar">
+
             <input type="text" placeholder="Buscar productos...">
             <button>Buscar</button>
         </div>
@@ -41,32 +38,7 @@
         <main>
             <section id="productosfav">
                 <h3>Favoritos de nuestros clientes</h3>
-                <div class="productosfav">
-                    <div class="fav1 product-card" data-product-id="pf-sérum-de-ácido-hialurónico">
-                        <img src="./css/img/fav1.jpg" alt="favorito belleza" class="product-img">
-                        <p class="product-name">Sérum de ácido hialurónico</p>
-                        <span class="price">15.99</span>
-                        <button class="btn-anadir-fav add-to-cart">Añadir</button>
-                    </div>
-                    <div class="fav2 product-card" data-product-id="pf-zumo-de-naranja-100">
-                        <img src="./css/img/fav2.jpg" alt="zumo de naranja" class="product-img">
-                        <p class="product-name">Zumo de naranja 100%</p>
-                        <span class="price">2.99</span>
-                        <button class="btn-anadir-fav add-to-cart">Añadir</button>
-                    </div>
-                    <div class="fav3 product-card" data-product-id="pf-tequila-sunrise-cóctel">
-                        <img src="./css/img/fav3.jpg" alt="cóctel refrescante" class="product-img">
-                        <p class="product-name">Tequila sunrise cóctel</p>
-                        <span class="price">8.99</span>
-                        <button class="btn-anadir-fav add-to-cart">Añadir</button>
-                    </div>
-                    <div class="fav4 product-card" data-product-id="pf-spray-multiusos-limón">
-                        <img src="./css/img/fav4.jpg" alt="spray multiusos" class="product-img">
-                        <p class="product-name">Spray multiusos limón</p>
-                        <span class="price">3.49</span>
-                        <button class="btn-anadir-fav add-to-cart">Añadir</button>
-                    </div>
-                </div>
+                
             </section>
 
             
@@ -74,18 +46,18 @@
                 <h3>Grandes ofertas en Sneakers</h3>
                 <div class="ofertas">
                     <div class="imgoferta">
-                        <img src="./css/img/marco-plano-de-verduras-con-espacio-de-copia.jpg" alt="ofertas">
-                        <p>10 % EN ADIDAS Y NIKE</p>
+                        <img src="./css/img/1248.jpg" alt="ofertas">
+                       
                         <button>Comprar</button>
                     </div>
                 </div>
             </section>
 
-            <section id="newlester">
+            <section id="newsletter">
                 <div class="clubfresh">
-                    <img src="./css/img/clubfresh.jpg" alt="club fresh">
-                    <p>Disfruta de descuentos exclusivos, promociones especiales y mucho más al unirte a nuestra newlester. ¡Haz clic aquí para registrarte y comenzar a ahorrar hoy mismo!</p>
-                    <button>Unete a nuestra newlester</button>
+                    <img src="./css/img/clubfresh.jpg" alt="Newsletter">
+                    <p>Disfruta de descuentos exclusivos, promociones especiales y mucho más.</p>
+                    <button>Unete a nuestra Newsletter</button>
                 </div>
             </section>
         </main>
@@ -114,6 +86,5 @@
             </div>
         </footer>
     <script src="./js/cart.js"></script>
-    <script src="./js/menuhamb.js"></script>
 </body>
 </html>

@@ -43,9 +43,9 @@
     const cards = Array.from(document.querySelectorAll('.product-card'));
     clearHighlights();
     for (const card of cards) {
-      const name = (card.querySelector('.product-name') && card.querySelector('.product-name').textContent.toLowerCase()) || '';
-      const desc = (card.querySelector('.product-desc') && card.querySelector('.product-desc').textContent.toLowerCase()) || '';
-      if (name.includes(q) || desc.includes(q)) {
+      // Buscar en todo el texto del producto para ser tolerante a nombres de clase distintos
+      const text = (card.textContent || '').toLowerCase();
+      if (text.includes(q)) {
         card.classList.add('search-highlight');
         card.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return true;

@@ -1,44 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SneakFlow</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
+
 <body>
     <div id="content">
         <header>
-            <img src="../css/img/logo.png">
+            <img src="../css/img/v1057-logo-24.png" alt="Logo Shoesrelife">
 
             <nav class="navbar">
                 <ul>
                     <li><a href="../index.html" title="Página Principal"><i class="fas fa-home"></i></a></li>
                     <li><a href="../iniciosesion/index.html" title="Inicia Sesión"><i class="fas fa-user"></i></a></li>
                     <li><a href="../favoritos/index.html" title="Favoritos"><i class="fas fa-heart"></i></a></li>
-                    <li><a href="../carrito/index.html" title="Carrito"><i class="fas fa-shopping-cart"></i></a> <span id="cart-count">0</span></li>
+                    <li><a href="../carrito/index.html" title="Carrito"><i class="fas fa-shopping-cart"></i></a> <span
+                            id="cart-count">0</span></li>
                 </ul>
-            </nav>    
+            </nav>
 
-            <nav class="navprod">
-                <button class="menuhamb" id="menuhamb">
-                    ☰
-                </button>
-               
+            <nav class="navcat">
+
                 <ul id="menu">
                     <li><a href="../categorias/hombre.html">Hombre</a></li>
                     <li><a href="../categorias/mujer.html">Mujer</a></li>
                     <li><a href="../categorias/ninos.html">Niños</a></li>
-                    
+
                 </ul>
             </nav>
-             <div id="barrabuscar">
-            <input type="text" placeholder="Buscar productos...">
-            <button>Buscar</button>
-        </div>
+            <div id="barrabuscar">
+                <input type="text" placeholder="Buscar productos...">
+                <button>Buscar</button>
+            </div>
         </header>
         <main>
+            <section id="favoritos">
+                <h1>Mis Favoritos</h1>
+                <div id="favoritos-list" class="gallery"></div>
+            </section>
         </main>
 
         <footer>
@@ -64,6 +68,8 @@
                 <a href="#">Condiciones de compra</a>
             </div>
         </footer>
-    <script src="../js/cart.js"></script>
+        <script src="../js/cart.js"></script>
+        <script src="../js/favoritos_page.js"></script>
 </body>
+
 </html>

@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return window.location.origin + '/back/' + file;
     }
 
-    function showOnlyMessage(text){
+    function showOnlyMessage(text, role){
         if (msg) { msg.textContent = text; msg.style.color = 'green'; }
         const form = document.querySelector('form');
         if (form) form.style.display = 'none';
@@ -52,6 +52,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     }catch(e){ location.reload(); }
                 });
             }
+            // mostrar menú de opciones si es cliente
+            renderClientMenu(role);
         } else {
             // fallback: añadir botón junto al mensaje
             if (!document.getElementById('btnLogout')) {
@@ -68,7 +70,60 @@ document.addEventListener('DOMContentLoaded', function () {
                     }catch(e){ location.reload(); }
                 });
             }
+            // eliminar menú si lo hay y no hay sección welcome
+            const existingMenu = document.getElementById('client-menu');
+            if (existingMenu) existingMenu.remove();
         }
+    }
+
+    function renderClientMenu(role){
+        // sólo para clientes (aceptar mayúsculas/minúsculas y variaciones)
+        if (!role || typeof role !== 'string' || !role.toLowerCase().startsWith('cli')) {
+            const m = document.getElementById('client-menu'); if (m) m.remove();
+            return;
+        }
+        const welcome = document.getElementById('welcome-section');
+        if (!welcome) return;
+        // evitar duplicados
+        let existing = document.getElementById('client-menu');
+        if (existing) existing.remove();
+
+        const nav = document.createElement('nav');
+        nav.id = 'client-menu';
+        nav.style.marginTop = '12px';
+        const ul = document.createElement('ul');
+        ul.style.display = 'flex';
+        ul.style.gap = '10px';
+        ul.style.listStyle = 'none';
+        ul.style.padding = '0';
+        ul.style.margin = '0';
+
+        const links = [
+            {t: 'Perfil', href: ('/projectmedacphp/tienda-zapatillas-DWES/back/opcionesclient.php') + '#profile'},
+            {t: 'Cambiar contraseña',  href:  ('/projectmedacphp/tienda-zapatillas-DWES/back/opcionesclient.php') + '#password'},
+            {t: 'Mis pedidos', href: ('/projectmedacphp/tienda-zapatillas-DWES/back/opcionesclient.php') + '#orders'},
+            {t: 'Favoritos', href: '../favoritos/index.html'}
+        ];
+
+        links.forEach(item => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = item.href;
+            a.textContent = item.t;
+            a.className = 'client-menu-link';
+            a.style.textDecoration = 'none';
+            a.style.color = '#111';
+            a.style.padding = '6px 10px';
+            a.style.border = '1px solid transparent';
+            a.style.borderRadius = '6px';
+            a.addEventListener('mouseover', ()=> a.style.borderColor = '#ddd');
+            a.addEventListener('mouseout', ()=> a.style.borderColor = 'transparent');
+            li.appendChild(a);
+            ul.appendChild(li);
+        });
+
+        nav.appendChild(ul);
+        welcome.appendChild(nav);
     }
 
     // comprobar si ya hay sesión activa al cargar
@@ -77,8 +132,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const url = apiPath('iniciosesion.php');
             const res = await fetch(url, { method: 'GET', credentials: 'same-origin' });
             const data = await res.json();
-            if (data.success && data.username) showOnlyMessage('Bienvenido ' + data.username);
-        }catch(e){ /* ignore */ }
+            console.log('checkSession response:', data);
+            if (data.success && data.username) showOnlyMessage('Bienvenido ' + data.username, data.role);
+        }catch(e){ console.error('checkSession failed', e); }
     })();
 
     async function send(action) {
@@ -116,6 +172,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('response text', text);
             let data;
             try { data = JSON.parse(text); } catch (e) { throw new Error('Respuesta no JSON: ' + text); }
+            console.log('iniciosesion parsed response:', data);
             msg.textContent = data.message || 'Respuesta inesperada';
             msg.style.color = data.success ? 'green' : 'red';
 
@@ -130,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // éxito
             if (action === 'register') {
                 // registrar -> ya iniciamos sesión en el backend
-                showOnlyMessage('Registrado y conectado. Bienvenido ' + username);
+                showOnlyMessage('Registrado y conectado. Bienvenido ' + username, data.role);
                 // si es administrador, redirigir al panel
                 if (data.role === 'administrador') {
                     window.location.href = '/projectmedacphp/tienda-zapatillas-DWES/back/admin.php';
@@ -142,12 +199,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.role === 'administrador') {
                     window.location.href = '/projectmedacphp/tienda-zapatillas-DWES/back/admin.php';
                 } else {
-                    showOnlyMessage('Bienvenido ' + username);
+                    showOnlyMessage('Bienvenido ' + username, data.role);
                 }
             }
 
         } catch (error) {
-            msg.textContent = 'Error de red. Intenta nuevamente.'; msg.style.color = 'red';
+            console.error('Login/Register error:', error);
+            msg.textContent = error.message || 'Error de red. Intenta nuevamente.'; msg.style.color = 'red';
         } finally {
             if (btnLogin) btnLogin.disabled = false;
             if (btnRegister) btnRegister.disabled = false;

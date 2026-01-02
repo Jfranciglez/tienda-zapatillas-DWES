@@ -60,7 +60,7 @@ if ($accion === 'login') {
     mysqli_stmt_execute($stmt);
     mysqli_stmt_bind_result($stmt, $hash, $dbrol);
     if (mysqli_stmt_fetch($stmt)) {
-        // (logs temporales eliminados)
+      
 
         if (password_verify($contrasena, $hash)) {
             // guardar username en la sesión

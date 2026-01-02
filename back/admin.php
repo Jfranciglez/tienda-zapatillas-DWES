@@ -2,175 +2,284 @@
 session_start();
 require_once __DIR__ . '/../database/conexion.php';
 
-// Verificar sesión y rol de administrador
-if (empty($_SESSION['username']) || empty($_SESSION['role']) || $_SESSION['role'] !== 'administrador') {
+if ($_SESSION['role'] !== 'administrador') {
     header('Location: ../front/index.html');
     exit;
 }
 
-// manejar acciones POST: actualizar usuario
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = $_POST['action'] ?? '';
-    if ($action === 'update_user') {
-        $user_id = intval($_POST['user_id'] ?? 0);
-        $new_username = trim($_POST['username'] ?? '');
-        $new_role = trim($_POST['role'] ?? 'cliente');
-        $new_password = $_POST['password'] ?? '';
-        if ($user_id > 0 && $new_username !== '') {
-            // actualizar username y role
-            $stmt = mysqli_prepare($conexion, 'UPDATE usuarios SET username = ?, role = ? WHERE user_id = ?');
-            mysqli_stmt_bind_param($stmt, 'ssi', $new_username, $new_role, $user_id);
-            mysqli_stmt_execute($stmt);
-            mysqli_stmt_close($stmt);
-            // actualizar password si se proporcionó
-            if ($new_password !== '') {
-                $hash = password_hash($new_password, PASSWORD_DEFAULT);
-                $stmt2 = mysqli_prepare($conexion, 'UPDATE usuarios SET password = ? WHERE user_id = ?');
-                mysqli_stmt_bind_param($stmt2, 'si', $hash, $user_id);
-                mysqli_stmt_execute($stmt2);
-                mysqli_stmt_close($stmt2);
-            }
-        }
-    }
-    if ($action === 'delete_user') {
-        $user_id = intval($_POST['user_id'] ?? 0);
-        if ($user_id > 0) {
-            $stmt = mysqli_prepare($conexion, 'DELETE FROM usuarios WHERE user_id = ?');
-            mysqli_stmt_bind_param($stmt, 'i', $user_id);
-            mysqli_stmt_execute($stmt);
-            mysqli_stmt_close($stmt);
-        }
-    }
-    // redirigir para evitar reenvío de formularios
-    header('Location: ' . $_SERVER['PHP_SELF']);
-    exit;
+$accion = $_POST['accion'] ?? '';
+$id = intval($_POST['id'] ?? 0);
+
+/* =======================
+   CRUD USUARIOS
+======================= */
+
+if ($accion === 'eliminar_usuario') {
+    $stmt = mysqli_prepare($conexion, "DELETE FROM usuarios WHERE user_id = ?");
+    mysqli_stmt_bind_param($stmt, 'i', $id);
+    mysqli_stmt_execute($stmt);
 }
 
-// CRUD de usuarios solo para admin
-echo "Bienvenido, administrador";
+if ($accion === 'agregar_usuario') {
+    $username = trim($_POST['username']);
+    $role = $_POST['role'];
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+
+    $stmt = mysqli_prepare(
+        $conexion,
+        "INSERT INTO usuarios (username, password, role) VALUES (?, ?, ?)"
+    );
+    mysqli_stmt_bind_param($stmt, 'sss', $username, $password, $role);
+    mysqli_stmt_execute($stmt);
+}
+
+if ($accion === 'editar_usuario') {
+    $username = trim($_POST['username']);
+    $role = $_POST['role'];
+
+    $stmt = mysqli_prepare(
+        $conexion,
+        "UPDATE usuarios SET username=?, role=? WHERE user_id=?"
+    );
+    mysqli_stmt_bind_param($stmt, 'ssi', $username, $role, $id);
+    mysqli_stmt_execute($stmt);
+}
+
+/* =======================
+   CRUD PRODUCTOS
+======================= */
+
+if ($accion === 'eliminar_producto') {
+    $stmt = mysqli_prepare($conexion, "DELETE FROM productos WHERE productos_id = ?");
+    mysqli_stmt_bind_param($stmt, 'i', $id);
+    mysqli_stmt_execute($stmt);
+}
+
+if ($accion === 'agregar_producto') {
+    $nombre = trim($_POST['nombre']);
+    $categoria = trim($_POST['categoria']);
+    $precio = floatval($_POST['precio']);
+
+    $stmt = mysqli_prepare(
+        $conexion,
+        "INSERT INTO productos (nombre, categoria, precio) VALUES (?, ?, ?)"
+    );
+    mysqli_stmt_bind_param($stmt, 'ssd', $nombre, $categoria, $precio);
+    mysqli_stmt_execute($stmt);
+}
+
+if ($accion === 'editar_producto') {
+    $nombre = trim($_POST['nombre']);
+    $categoria = trim($_POST['categoria']);
+    $precio = floatval($_POST['precio']);
+
+    $stmt = mysqli_prepare(
+        $conexion,
+        "UPDATE productos SET nombre=?, categoria=?, precio=? WHERE productos_id=?"
+    );
+    mysqli_stmt_bind_param($stmt, 'ssdi', $nombre, $categoria, $precio, $id);
+    mysqli_stmt_execute($stmt);
+}
+
+/* evitar reenvío */
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    header('Location: admin.php');
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-    
 
- <table>
-    <thead>
+<body>
+    <div id="content">
+        <header>
+            <img src="../css/img/logo.png">
+
+            <nav class="navbar">
+                <ul>
+                    <li><a href="../front/index.html" title="Página Principal"><i class="fas fa-home"></i></a></li>
+                    <li><a href="../front/iniciosesion/index.html" title="Inicia Sesión"><i class="fas fa-user"></i></a></li>
+                    <li><a href="../front/favoritos/index.html" title="Favoritos"><i class="fas fa-heart"></i></a></li>
+                    <li><a href="../front/carrito/index.html" title="Carrito"><i class="fas fa-shopping-cart"></i></a> <span id="cart-count">0</span></li>
+                </ul>
+            </nav>    
+
+            <nav class="navprod">
+                <button class="menuhamb" id="menuhamb">
+                    ☰
+                </button>
+               
+                <ul id="menu">
+                    <li><a href="../categorias/hombre.html">Hombre</a></li>
+                    <li><a href="../categorias/mujer.html">Mujer</a></li>
+                    <li><a href="../categorias/ninos.html">Niños</a></li>
+                    
+                </ul>
+            </nav>
+            <div id="barrabuscar">
+            <input type="text" placeholder="Buscar productos...">
+            <button>Buscar</button>
+            </div>
+        </header>
+        <main>
+        
+
+        
+    <h2>Gestión de Usuarios</h2>
+
+    <table>
         <tr>
             <th>ID</th>
-            <th>Rol</th>
             <th>Usuario</th>
-            <th>Contraseña</th>
+            <th>Rol</th>
             <th>Acciones</th>
         </tr>
-    </thead>
-    <tbody>
-        <!--Aquí van las query de user y mas abajo el mismo crud  lo mismo pero con productos manteniedno odo en la misma pagina-->
+
         <?php
-        require_once __DIR__ . '/../database/conexion.php';
+        $editUser = intval($_GET['edit_user'] ?? 0);
+        $res = mysqli_query($conexion, "SELECT user_id, username, role FROM usuarios");
 
-        //CRUD de usuarios
-        $query = "SELECT user_id, role, username, password FROM usuarios";
-        $result = mysqli_query($conexion, $query);
-      while ($registro = mysqli_fetch_array(result: $result)) {
-       if (($accion == 'modificar') && ($id == $registro['user_id'])) {
-                        //fila modificar
-                        ?>
-                        <tr class="fila-modificable">
-                        <form action="#" method="post">
-                            <td><input type="text" name="id" value="<?= $registro["user_id"] ?>"></td>
-                            <td><input type="text" name="rol" value="<?= $registro["role"] ?>"></td>
-                            <td><input type="text" name="usuario" value="<?= $registro["username"] ?>"></td>
-                            <td><input type="text" name="contraseña" value="<?= $registro["password"] ?>"></td>
-
-                            <td>
-                                <input type="hidden" name="accion" value="actualizar">
-                                <input type="hidden" name="idAntiguo" value="<?= $registro["id"] ?>">
-                                <button type="submit" class="btn btn-success">
-                                    <i class="bi bi-check-circle"></i>
-                                    Aceptar
-                                </button>
-                    
-                            </td>
-                        </form>
-                            <td>
-                                <form action="#" method="post">
-                                
-                                    <button type="submit" class="btn btn-danger">
-                                        <i class="bi bi-x-lg"></i>
-                                        Cancelar
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        <?php
-                    } else {
-                        //fila normal
-                       
-                        ?>
-
-                        <tr>
-                            <td><?= $registro["user_id"] ?></td>
-                            <td><?= $registro["role"] ?></td>
-                            <td><?= $registro["username"] ?></td>
-                            <td><?= $registro["password"] ?></td>
-                            
-                            <td>
-                                <form action="#" method="post">
-                                    <input type="hidden" name="accion" value="eliminar">
-                                    <input type="hidden" name="id" value="<?= $registro["user_id"] ?>">
-                                    <button type="submit" class="btn btn-danger"
-                                        <?= $accion == "modificar" ? "disabled" : ""?>>
-                                        <i class="bi bi-trash"></i>
-                                        Eliminar
-                                    </button>
-                                </form>
-                            </td>
-                            <td>
-                                <form action="#" method="post">
-                                    <input type="hidden" name="accion" value="modificar">
-                                    <input type="hidden" name="id" value="<?= $registro["user_id"] ?>">
-                                    <button type="submit" class="btn btn-primary"
-                                        <?= $accion == "modificar" ? "disabled" : ""?>>
-                                        <i class="bi bi-pencil"></i>
-                                        Modificar
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        <?php
-
-                    }
-
-                }
-                if ($accion != "modificar"){
+        while ($u = mysqli_fetch_assoc($res)) {
+            if ($editUser === intval($u['user_id'])) {
                 ?>
                 <tr>
-                    <form action="#" method="post">
-                        <input type="hidden" name="accion" value="agregar">
-                        <td><input name="id"></td>
-                        <td><input name="role"></td>
-                        <td><input name="username"></td>
-                        <td><input name="password"></td>
+                    <form method="post">
+                        <td><?= $u['user_id'] ?></td>
+                        <td><input name="username" value="<?= htmlspecialchars($u['username']) ?>"></td>
                         <td>
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-plus"></i>
-                                Añadir
-                            </button>
+                            <select name="role">
+                                <option value="cliente" <?= $u['role'] == 'cliente' ? 'selected' : '' ?>>cliente</option>
+                                <option value="administrador" <?= $u['role'] == 'administrador' ? 'selected' : '' ?>>administrador
+                                </option>
+                            </select>
                         </td>
+                        <td>
+                            <input type="hidden" name="accion" value="editar_usuario">
+                            <input type="hidden" name="id" value="<?= $u['user_id'] ?>">
+                            <button>Guardar</button>
+                            <a href="admin.php">Cancelar</a>
+                        </td>
+                    </form>
                 </tr>
-                <?php
-                }
-                ?>
-                </form>
-            </table>
+            <?php } else { ?>
+                <tr>
+                    <td><?= $u['user_id'] ?></td>
+                    <td><?= htmlspecialchars($u['username']) ?></td>
+                    <td><?= $u['role'] ?></td>
+                    <td>
+                        <a href="?edit_user=<?= $u['user_id'] ?>">Editar</a>
+                        <form method="post" style="display:inline">
+                            <input type="hidden" name="accion" value="eliminar_usuario">
+                            <input type="hidden" name="id" value="<?= $u['user_id'] ?>">
+                            <button>Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            <?php }
+        } ?>
+        <form method="post">
+            <input name="username" placeholder="Usuario" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <select name="role">
+                <option value="cliente">cliente</option>
+                <option value="administrador">administrador</option>
+            </select>
+            <input type="hidden" name="accion" value="agregar_usuario">
+            <button>Añadir usuario</button>
+        </form>
+    </table>
 
-            CRUD de productos
-    
+    <h2>Gestión de Productos</h2>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Precio</th>
+            <th>Acciones</th>
+        </tr>
+
+        <?php
+        $editProd = intval($_GET['edit_prod'] ?? 0);
+        $res = mysqli_query($conexion, "SELECT * FROM productos");
+
+        while ($p = mysqli_fetch_assoc($res)) {
+            if ($editProd === intval($p['productos_id'])) {
+                ?>
+                <tr>
+                    <form method="post">
+                        <td><?= $p['productos_id'] ?></td>
+                        <td><input name="nombre" value="<?= htmlspecialchars($p['nombre']) ?>"></td>
+                        <td><input name="categoria" value="<?= htmlspecialchars($p['categoria']) ?>"></td>
+                        <td><input type="number" step="0.01" name="precio" value="<?= $p['precio'] ?>"></td>
+                        <td>
+                            <input type="hidden" name="accion" value="editar_producto">
+                            <input type="hidden" name="id" value="<?= $p['productos_id'] ?>">
+                            <button>Guardar</button>
+                            <a href="admin.php">Cancelar</a>
+                        </td>
+                    </form>
+                </tr>
+            <?php } else { ?>
+                <tr>
+                    <td><?= $p['productos_id'] ?></td>
+                    <td><?= htmlspecialchars($p['nombre']) ?></td>
+                    <td><?= htmlspecialchars($p['categoria']) ?></td>
+                    <td>€<?= number_format($p['precio'], 2) ?></td>
+                    <td>
+                        <a href="?edit_prod=<?= $p['productos_id'] ?>">Editar</a>
+                        <form method="post" style="display:inline">
+                            <input type="hidden" name="accion" value="eliminar_producto">
+                            <input type="hidden" name="id" value="<?= $p['productos_id'] ?>">
+                            <button>Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            <?php }
+        } ?>
+        <form method="post">
+            <input name="nombre" placeholder="Nombre" required>
+            <input name="categoria" placeholder="Categoría" required>
+            <input type="number" step="0.01" name="precio" placeholder="Precio" required>
+            <input type="hidden" name="accion" value="agregar_producto">
+            <button>Añadir producto</button>
+        </form>
+    </table>
+    </main>
+    </div>
 </body>
+<footer>
+            <div class="social-links">
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" title="Facebook">
+                    <i class="fab fa-facebook"></i>
+                </a>
+                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" title="YouTube">
+                    <i class="fab fa-youtube"></i>
+                </a>
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" title="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://x.com" target="_blank" rel="noopener noreferrer" title="X (Twitter)">
+                    <i class="fab fa-x-twitter"></i>
+                </a>
+                <button class="btn btn-outline-primary" id="atencioncliente">Atención al cliente</button>
+            </div>
+            <div class="footer-links">
+                <a href="#">Política de privacidad</a>
+                <a href="#">Política de cookies</a>
+                <a href="#">Aviso legal</a>
+                <a href="#">Condiciones de compra</a>
+            </div>
+        </footer>
+    <script src="../js/cart.js"></script>
+
 </html>

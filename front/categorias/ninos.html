@@ -1,86 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 </head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SneakFlow - Niños</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/style.css">
-   
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SneakFlow - Niños</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="../css/style.css">
+
 </head>
+
 <body>
     <div id="content">
         <header>
-            <img src="./css/img/logo.png">
+            <img src="../css/img/v1057-logo-24.png " alt="logo Shoesrelife">
 
             <nav class="navbar">
                 <ul>
                     <li><a href="../index.html" title="Página Principal"><i class="fas fa-home"></i></a></li>
                     <li><a href="../iniciosesion/index.html" title="Inicia Sesión"><i class="fas fa-user"></i></a></li>
                     <li><a href="../favoritos/index.html" title="Favoritos"><i class="fas fa-heart"></i></a></li>
-                    <li><a href="../carrito/index.html" title="Carrito"><i class="fas fa-shopping-cart"></i></a> <span id="cart-count">0</span></li>
+                    <li><a href="../carrito/index.html" title="Carrito"><i class="fas fa-shopping-cart"></i></a> <span
+                            id="cart-count">0</span></li>
                 </ul>
-            </nav>    
+            </nav>
 
-            <nav class="navprod">
-                <button class="menuhamb" id="menuhamb">
-                    ☰
-                </button>
-               
+            <nav class="navcat">
+                
                 <ul id="menu">
                     <li><a href="./hombre.html">Hombre</a></li>
                     <li><a href="./mujer.html">Mujer</a></li>
                     <li><a href="./ninos.html">Niños</a></li>
-                    
+
                 </ul>
             </nav>
-             <div id="barrabuscar">
-            <input type="text" placeholder="Buscar productos...">
-            <button>Buscar</button>
-        </div>
-       </header>
+            <div id="barrabuscar">
+                <input type="text" placeholder="Buscar productos...">
+                <button>Buscar</button>
+            </div>
+        </header>
         <main>
-            <section id="banner-homeninos">
-                <div class="banner-contentninos">
-                    <h2>Niños</h2>
-                </div>
-                <img src="../css/img/piernas-de-companeros-de-clase-sentados-en-el-parque-infantil.jpg" alt="banner-homeninos">
-            </section>
+
+            <h2>Niños</h2>
 
             <section aria-label="Galería de zapatillas para niños">
-                <div class="gallery" id="gallery"></div>
-            </section>
+                <article class="product-card" data-product-id="prod-001" data-price="29.99">
 
-            <!-- Modal de producto -->
-            <div id="product-modal" class="modal" role="dialog" aria-hidden="true">
-                <div class="panel">
-                    <button id="close-modal" style="float:right">Cerrar</button>
-                    <div style="display:flex; gap:12px; align-items:flex-start;">
-                        <img id="modal-img" src="" alt="" style="width:180px;height:180px;object-fit:cover;border-radius:6px">
-                        <div style="flex:1">
-                            <h3 id="modal-name"></h3>
-                            <p id="modal-desc"></p>
-                            <p><strong id="modal-price"></strong></p>
-                            <div class="sizes">
-                                <label>Talla:</label>
-                                <select id="modal-size"></select>
-                            </div>
-                            <div style="margin-top:8px">
-                                <label>Cantidad:</label>
-                                <input id="modal-qty" type="number" value="1" min="1" style="width:60px">
-                            </div>
-                            <div style="margin-top:10px">
-                                <button id="modal-add" class="add-to-cart">Añadir al carrito</button>
-                            </div>
+                    <div class="product-img">
+                        <img src="../css/img/nino-con-jeans-zapatillas-blancas.jpg" alt="Zapatillas Nike Air Max">
+                    </div>
+
+                    <div class="product-info">
+                        <h3 class="product-name">Nike Air Max 90</h3>
+                        <p class="product-desc">Zapatillas deportivas para uso diario</p>
+
+                        <div class="product-footer">
+                            <span class="product-price">29,99 €</span>
+                            <button class="add-to-cart">Añadir</button>
                         </div>
                     </div>
-                </div>
-            </div>
+                </article>
+
+                <article class="product-card" data-product-id="prod-002" data-price="39.99">
+                    <div class="product-img">
+                        <img src="img/zapatilla2.jpg" alt="Zapatillas Kids">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Adidas Kids Run</h3>
+                        <p class="product-desc">Cómodas y ligeras para jugar</p>
+                        <div class="product-footer">
+                            <span class="product-price">39,99 €</span>
+                            <button class="add-to-cart">Añadir</button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card" data-product-id="prod-003" data-price="34.99">
+                    <div class="product-img">
+                        <img src="img/zapatilla3.jpg" alt="Zapatillas Niño Casual">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Puma Kids</h3>
+                        <p class="product-desc">Diseño casual y resistente</p>
+                        <div class="product-footer">
+                            <span class="product-price">34,99 €</span>
+                            <button class="add-to-cart">Añadir</button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card" data-product-id="prod-004" data-price="44.99">
+                    <div class="product-img">
+                        <img src="img/zapatilla4.jpg" alt="Zapatillas Niño Outdoor">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">New Balance Jr</h3>
+                        <p class="product-desc">Soporte extra para actividades al aire libre</p>
+                        <div class="product-footer">
+                            <span class="product-price">44,99 €</span>
+                            <button class="add-to-cart">Añadir</button>
+                        </div>
+                    </div>
+                </article>
+
+            </section>
 
         </main>
 
-        </div>
+    </div>
 
     <script src="../js/cart.js"></script>
-    <script src="../js/pninos.js"></script>
+</body>
+</html>
