@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SneakFlow</title>
+    <title>ShoesRelife</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./css/style.css">
 </head>
+
 <body>
     <div id="content">
         <header>
@@ -18,73 +19,82 @@
                     <li><a href="index.html" title="Página Principal"><i class="fas fa-home"></i></a></li>
                     <li><a href="./iniciosesion/index.html" title="Inicia Sesión"><i class="fas fa-user"></i></a></li>
                     <li><a href="./favoritos/index.html" title="Favoritos"><i class="fas fa-heart"></i></a></li>
-                    <li><a href="./carrito/index.html" title="Carrito"><i class="fas fa-shopping-cart"></i></a> <span id="cart-count">0</span></li>
+                    <li><a href="./carrito/index.html" title="Carrito"><i class="fas fa-shopping-cart"></i></a> <span
+                            id="cart-count">0</span></li>
                 </ul>
-            </nav>    
+            </nav>
             <nav class="navcat">
                 <ul id="menu">
                     <li><a href="./categorias/hombre.html">Hombre</a></li>
                     <li><a href="./categorias/mujer.html">Mujer</a></li>
                     <li><a href="./categorias/ninos.html">Niños</a></li>
-                    
+
                 </ul>
             </nav>
-             <div id="barrabuscar">
+            <div id="barrabuscar">
 
-            <input type="text" placeholder="Buscar productos...">
-            <button>Buscar</button>
-        </div>
+                <input type="text" placeholder="Buscar productos...">
+                <button>Buscar</button>
+            </div>
         </header>
         <main>
-            <section id="productosfav">
-                <h3>Favoritos de nuestros clientes</h3>
-                
+            <section id="tendencias">
+                <h3>Tendencias</h3>
+                <div class="home-banner">
+                    <div class="banner-track">
+                        <img
+                            src="./css/img/cerrar-imagen-de-moda-de-pies-de-mujer-vistiendo-jeans-vintage-y-elegantes-zapatillas-rojas-colores-de-tonos-brillantes.jpg">
+                        <img src="./css/img/nino-con-bicicleta-al-aire-libre.jpg">
+                        <img src="./css/img/retrato-de-guapo-seguro-elegante-hipster-lambersexual-modelo.jpg">
+                    </div>
+                </div>
+
+
             </section>
 
-            
+
             <section id="ofertas">
                 <h3>Grandes ofertas en Sneakers</h3>
                 <div class="ofertas">
-                    <div class="imgoferta">
-                        <img src="./css/img/1248.jpg" alt="ofertas">
-                       
-                        <button>Comprar</button>
-                    </div>
+                    <img src="./css/img/20shoes_9.jpg" alt="ofertas">
+                    <button>Comprar</button>
                 </div>
             </section>
 
             <section id="newsletter">
-                <div class="clubfresh">
-                    <img src="./css/img/clubfresh.jpg" alt="Newsletter">
-                    <p>Disfruta de descuentos exclusivos, promociones especiales y mucho más.</p>
-                    <button>Unete a nuestra Newsletter</button>
+                <h3>Ofertas, novedades y tendencias
+                    Directo a tu correo</h3>
+                <div class="newsletter">
+                    <p>Te llegarán descuentos, novedades e inspiración para tu estilo.</p>
+                    <button>Suscríbete a nuestra Newsletter</button>
                 </div>
             </section>
         </main>
+    </div>
 
-        <footer>
-            <div class="social-links">
-                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" title="Facebook">
-                    <i class="fab fa-facebook"></i>
-                </a>
-                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" title="YouTube">
-                    <i class="fab fa-youtube"></i>
-                </a>
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" title="Instagram">
-                    <i class="fab fa-instagram"></i>
-                </a>
-                <a href="https://x.com" target="_blank" rel="noopener noreferrer" title="X (Twitter)">
-                    <i class="fab fa-x-twitter"></i>
-                </a>
-                <button class="btn btn-outline-primary" id="atencioncliente">Atención al cliente</button>
-            </div>
-            <div class="footer-links">
-                <a href="#">Política de privacidad</a>
-                <a href="#">Política de cookies</a>
-                <a href="#">Aviso legal</a>
-                <a href="#">Condiciones de compra</a>
-            </div>
-        </footer>
+    <footer>
+        <div class="social-links">
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" title="Facebook">
+                <i class="fab fa-facebook"></i>
+            </a>
+            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" title="YouTube">
+                <i class="fab fa-youtube"></i>
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" title="Instagram">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <button id="atencioncliente">Atención al cliente</button>
+        </div>
+        <div class="footer-links">
+            <a href="#">Política de privacidad</a>
+            <a href="#">Política de cookies</a>
+            <a href="#">Aviso legal</a>
+            <a href="#">Condiciones de compra</a>
+        </div>
+    </footer>
     <script src="./js/cart.js"></script>
+    <script src="./js/search.js"></script>
+    <script src="./js/favorites.js"></script>
 </body>
+
 </html>
