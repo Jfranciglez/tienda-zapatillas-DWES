@@ -1,5 +1,6 @@
+'use strict';
 (function () {
-  'use strict';
+  
   
   const LS_KEY = 'favorites';
 
@@ -51,30 +52,44 @@
 
     if (noFavsMsg) noFavsMsg.style.display = 'none';
 
-    entries.forEach(([id, name]) => {
+    entries.forEach(([id, val]) => {
       const card = document.createElement('article');
       card.className = 'product-card';
       card.dataset.productId = id;
 
+      // support migrated format where value may be string or object
+      const name = (typeof val === 'string') ? val : (val && val.name) ? val.name : id;
+      const imgSrc = (val && val.img) ? val.img : '../css/img/placeholder.png';
+
       card.innerHTML = `
-        <img src="../css/img/placeholder.png" alt="${name}" class="product-img">
+        <img src="${imgSrc}" alt="${name}" class="product-img">
         <h2 class="product-name">${name}</h2>
         <div class="product-meta">
-          <button class="fav-btn favorited" type="button" aria-label="Eliminar de favoritos" data-remove-id="${id}">
+          <button class="fav-btn favorited" type="button" aria-label="Eliminar de favoritos" data-fav-id="${id}">
             <i class="fas fa-heart"></i>
           </button>
         </div>
       `;
 
-      const removeBtn = card.querySelector('[data-remove-id]');
-      removeBtn.addEventListener('click', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        const idToRemove = this.getAttribute('data-remove-id');
-        console.log('[FavoritosPage] Removing:', idToRemove);
-        removeFavorite(idToRemove);
-        renderFavorites();
-      });
+      const removeBtn = card.querySelector('[data-fav-id]');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const idToRemove = this.getAttribute('data-fav-id');
+          console.log('[FavoritosPage] Removing:', idToRemove);
+          // remove from localStorage using same structure as favorites.js
+          const favs = loadFavorites();
+          delete favs[idToRemove];
+          try {
+            localStorage.setItem(LS_KEY, JSON.stringify(favs));
+            window.dispatchEvent(new CustomEvent('favoritesUpdated', { detail: { id: idToRemove, data: favs } }));
+          } catch (e) {
+            console.error('[FavoritosPage] Error saving:', e);
+          }
+          renderFavorites();
+        });
+      }
 
       container.appendChild(card);
     });

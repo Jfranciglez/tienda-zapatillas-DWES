@@ -37,12 +37,19 @@
 
   function loadFavorites() {
     console.log('[Favorites] Loading...');
-    
+
     if (storage) {
       try {
         const stored = storage.getItem(STORAGE_KEY);
         if (stored) {
-          favoriteData = JSON.parse(stored);
+          const parsed = JSON.parse(stored);
+          // Normalize older format (string name) to object {name, img}
+          Object.keys(parsed).forEach(k => {
+            if (typeof parsed[k] === 'string') {
+              parsed[k] = { name: parsed[k], img: '' };
+            }
+          });
+          favoriteData = parsed;
           console.log('[Favorites] ✓ Loaded from storage:', favoriteData);
           return favoriteData;
         }
@@ -50,7 +57,7 @@
         console.error('[Favorites] Error parsing stored data:', e);
       }
     }
-    
+
     console.log('[Favorites] No data found, using empty object');
     return favoriteData;
   }
@@ -90,7 +97,7 @@
   }
 
   
-  function toggleFavorite(productId, productName) {
+  function toggleFavorite(productId, productName, productImg) {
     console.log('[Favorites] ====== TOGGLE START ======');
     console.log('[Favorites] Params:', { productId, productName });
 
@@ -101,6 +108,7 @@
 
     const id = productId.trim();
     const name = (productName || 'Producto').toString().trim();
+    const img = (productImg || '').toString().trim();
 
     console.log('[Favorites] Clean params:', { id, name });
 
@@ -108,8 +116,8 @@
       delete favoriteData[id];
       console.log('[Favorites] ✓ Removed:', id);
     } else {
-      favoriteData[id] = name;
-      console.log('[Favorites] ✓ Added:', { id, name });
+      favoriteData[id] = { name: name, img: img };
+      console.log('[Favorites] ✓ Added:', { id, name, img });
     }
 
     console.log('[Favorites] Current data:', favoriteData);
@@ -158,6 +166,11 @@
     btn.className = 'fav-btn';
     btn.setAttribute('data-fav-id', productId);
     btn.setAttribute('data-product-name', name);
+    // try to capture product image if present on card
+    const parentCard = document.querySelector(`.product-card[data-product-id="${productId}"]`);
+    const imgEl = parentCard ? parentCard.querySelector('img') : null;
+    const imgSrc = imgEl ? imgEl.getAttribute('src') : '';
+    btn.setAttribute('data-product-img', imgSrc);
     btn.setAttribute('aria-label', `Añadir ${name} a favoritos`);
     
     const isFav = isFavorited(productId);
@@ -167,8 +180,9 @@
       e.preventDefault();
       e.stopPropagation();
       const btnName = this.getAttribute('data-product-name');
-      console.log('[Favorites] Button clicked:', { productId, btnName });
-      toggleFavorite(productId, btnName);
+      const btnImg = this.getAttribute('data-product-img') || '';
+      console.log('[Favorites] Button clicked:', { productId, btnName, btnImg });
+      toggleFavorite(productId, btnName, btnImg);
     });
 
     return btn;

@@ -85,7 +85,7 @@ function renderCartPage() {
     container.appendChild(list);
     container.appendChild(footer);
 
-    // eliminar
+    // eliminar item
     container.querySelectorAll('.cart-remove').forEach(btn => {
         btn.addEventListener('click', e => {
             const idx = Number(e.target.dataset.idx);
@@ -97,9 +97,64 @@ function renderCartPage() {
         });
     });
 
+    // vaciar carrito
     document.getElementById('clear-cart')
         ?.addEventListener('click', clearCart);
+
+    // checkout
+    document.getElementById('checkout')
+        ?.addEventListener('click', enviarPedido);
 }
+
+// =======================
+// Enviar pedido a ticket.php
+// =======================
+
+function enviarPedido() {
+    const cart = getCart();
+
+    if (cart.length === 0) {
+        alert("El carrito está vacío.");
+        return;
+    }
+
+    fetch("../../back/ticket.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            action: "checkout",
+            cart: cart
+        })
+    })
+    .then(res => res.text()) 
+    .then(text => {
+        console.log("RAW respuesta PHP:", text);
+
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            alert("La respuesta no es JSON válido. Mira la consola.");
+            console.error("Error parseando JSON:", e);
+            return;
+        }
+
+        console.log("JSON parseado:", data);
+
+        if (!data.success) {
+            alert(data.message || "Error al procesar el pedido");
+            return;
+        }
+
+        alert("Pedido realizado correctamente. ID: " + data.pedido_id);
+        clearCart();
+    })
+    .catch(err => {
+        console.error("Error fetch:", err);
+        alert("Hubo un problema al enviar el pedido (fetch)");
+    });
+}
+
 
 // =======================
 // Inicialización
